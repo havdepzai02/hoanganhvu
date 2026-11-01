@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TỔ 2 — MỘT BỮA NO (Nam Cao)</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <main id="viewport-stage">
+    
+    <!-- 2.5D CAMERA WORLD: Chứa tất cả các Layer đồ họa độc lập -->
+    <div id="world">
+      <!-- 0.65: Hậu cảnh -->
+      <img id="layer-BG_Village" class="cam-layer" src="assets/bg_village.jpg" alt="Làng quê">
+      <img id="layer-BG_Interior" class="cam-layer" src="assets/bg_interior.jpg" alt="Nhà ván">
+      
+      <!-- 0.80: Ánh sáng cửa rọi -->
+      <img id="layer-BG_Light" class="cam-layer" src="assets/bg_light.png" alt="Vệt sáng rọi">
+
+      <!-- 1.00: Chủ thể Hero -->
+      <img id="layer-Hero_Roofs" class="cam-layer" src="assets/mid_roofs.png" alt="Mái tranh">
+      <img id="layer-Hero_NamCao" class="cam-layer" src="assets/hero_namcao.png" alt="Bàn Nam Cao">
+      <img id="layer-Hero_Character" class="cam-layer" src="assets/hero_character.png" alt="Bà cụ ngược sáng">
+      <img id="layer-Hero_Table" class="cam-layer" src="assets/hero_table.png" alt="Mâm cơm">
+      <img id="layer-Hero_Hands" class="cam-layer" src="assets/hero_hands.png" alt="Bàn tay run">
+
+      <!-- 1.30: Tiền cảnh -->
+      <img id="layer-FG_BlurredObjects" class="cam-layer" src="assets/fg_bamboo.png" alt="Bụi tre">
+      <img id="layer-FG_DoorFrame" class="cam-layer" src="assets/fg_doorframe.png" alt="Khung cửa ván">
+
+      <!-- 1.40: Hạt bụi không gian -->
+      <img id="layer-FG_Dust" class="cam-layer dust-particle-anim" src="assets/fg_dust.png" alt="Bụi không gian">
+    </div>
+
+    <!-- 0.00: Vignette cố định đứng yên -->
+    <img id="layer-FG_Vignette" class="vignette-overlay" src="assets/fg_vignette.png" alt="Vignette">
+
+    <!-- Scrim tối chuyển dần cho Cảnh 01 và 10 -->
+    <div id="scrim-overlay" class="scrim-gradient"></div>
+
+    <!-- SVG Callouts nối từ điểm neo của đối tượng -->
+    <svg id="callout-svg-layer" viewBox="0 0 13.333 7.5">
+      <g id="callout-group-1">
+        <path id="callout-line-1" class="c-line" />
+        <circle id="callout-dot-1" class="c-dot" r="0.06" />
+      </g>
+      <g id="callout-group-2">
+        <path id="callout-line-2" class="c-line" />
+        <circle id="callout-dot-2" class="c-dot" r="0.06" />
+      </g>
+      <g id="callout-group-3">
+        <path id="callout-line-3" class="c-line" />
+        <circle id="callout-dot-3" class="c-dot" r="0.06" />
+      </g>
+    </svg>
+
+    <!-- Khung nhãn Callout Text -->
+    <div id="callout-chip-1" class="callout-chip"><span id="callout-text-1" class="callout-text"></span></div>
+    <div id="callout-chip-2" class="callout-chip"><span id="callout-text-2" class="callout-text"></span></div>
+    <div id="callout-chip-3" class="callout-chip"><span id="callout-text-3" class="callout-text"></span></div>
+
+    <!-- HUD Typography mở đầu (Cảnh 01) & kết thúc (Cảnh 10) -->
+    <section id="hud-cinema-panel" class="hud-cinema-container">
+      <div id="cinema-team" class="cinema-team">TỔ 2</div>
+      <div id="cinema-accent" class="cinema-accent"></div>
+      <h1 id="cinema-title" class="cinema-title">MỘT BỮA NO</h1>
+      <h2 id="cinema-thesis" class="cinema-thesis">Nam Cao</h2>
+      <p id="cinema-body" class="cinema-body">Cái đói, thân phận và lòng người</p>
+    </section>
+
+    <!-- HUD Panel kính mờ các cảnh phân tích (Cảnh 02 -> 09) -->
+    <section id="hud-glass-panel" class="hud-glass-card">
+      <h1 id="hud-title" class="hud-title">01. NAM CAO</h1>
+      <div id="hud-accent" class="hud-accent-bar"></div>
+      <h2 id="hud-thesis" class="hud-thesis">Nhìn thẳng vào đời sống của người nghèo</h2>
+      <p id="hud-body" class="hud-body">Cây bút hiện thực xuất sắc...</p>
+    </section>
+
+    <!-- Nhận diện nhóm & Chú thích minh họa góc dưới -->
+    <div id="hud-footer-caption" class="hud-footer-caption">Hình minh họa nghệ thuật do nhóm dựng — không phải ảnh tư liệu</div>
+    <div id="hud-footer-team" class="hud-footer-team">TỔ 2 — MỘT BỮA NO</div>
+
+    <!-- 10 Thanh tiến trình bền vững (!!HUD_Progress_01..10) -->
+    <div id="progress-dots" class="progress-bars-row"></div>
+
+    <!-- Nút xem Speaker Notes diễn giải -->
+    <button id="btn-toggle-notes" class="btn-notes" title="Phím tắt N">📝 Speaker Notes</button>
+    <aside id="speaker-notes-panel" class="notes-panel">
+      <div class="notes-header">
+        <strong>GHI CHÚ DIỄN GIẢ</strong>
+        <span id="close-notes">&times;</span>
+      </div>
+      <div id="notes-content" class="notes-body"></div>
+    </aside>
+
+    <!-- Thanh điều khiển phát (Controls Bar) -->
+    <footer class="player-controls">
+      <button class="nav-btn" id="btn-prev" title="Lùi (←)">❮</button>
+      <button class="nav-btn play-btn" id="btn-play-pause" title="Tạm dừng / Phát (Space)">❚❚ Tạm dừng</button>
+      <button class="nav-btn" id="btn-next" title="Tiếp (→)">❯</button>
+      <div class="progress-bar-container">
+        <div id="timeline-progress" class="progress-bar-inner"></div>
+      </div>
+      <span class="status-counter" id="scene-index">01 / 10</span>
+      <button class="nav-btn" id="btn-fullscreen" title="Toàn màn hình (F)">⛶</button>
+    </footer>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
